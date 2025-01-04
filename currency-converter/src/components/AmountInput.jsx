@@ -1,5 +1,6 @@
 import React from 'react';
 import { Loader2 } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 const AmountInput = ({ 
   value, 
@@ -8,9 +9,13 @@ const AmountInput = ({
   onCurrencyChange, 
   currencyConfig,
   loading = false,
-  readOnly = false 
+  readOnly = false,
+  layoutId = '' // For coordinated animations
 }) => (
-  <div className="relative flex items-center w-full p-2 mb-3 bg-white border border-gray-200 rounded-lg">
+  <motion.div
+    layoutId={layoutId}
+    className="relative flex items-center w-full p-2 mb-3 bg-white border border-gray-200 rounded-lg"
+  >
     <div className="flex items-center gap-2">
       <span className="text-xl w-8 h-8 flex items-center justify-center bg-gray-50 rounded-full">
         {currencyConfig[currency].flag}
@@ -40,7 +45,7 @@ const AmountInput = ({
       />
       {loading && <Loader2 className="w-4 h-4 animate-spin absolute right-2" />}
     </div>
-  </div>
+  </motion.div>
 );
 
 export default AmountInput;

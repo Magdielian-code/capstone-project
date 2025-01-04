@@ -6,16 +6,18 @@ const ConversionResult = ({
   currency, 
   onCurrencyChange, 
   currencyConfig,
-  loading 
+  loading,
+  layoutId 
 }) => (
   <AmountInput
     value={amount}
     currency={currency}
-    onChange={() => {}} // Empty function since it's read-only
+    onChange={() => {}}
     onCurrencyChange={onCurrencyChange}
     currencyConfig={currencyConfig}
     loading={loading}
     readOnly={true}
+    layoutId={layoutId}
   />
 );
 

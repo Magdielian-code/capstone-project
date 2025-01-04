@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { ArrowLeftRight } from 'lucide-react';
+import { AnimatePresence, motion, LayoutGroup } from 'framer-motion';
 import AmountInput from './AmountInput';
 import ConversionResult from './ConversionResult';
 
@@ -9,6 +11,7 @@ const CurrencySelector = () => {
   const [toCurrency, setToCurrency] = useState('GBP');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [isSwapping, setIsSwapping] = useState(false);
 
   const currencyConfig = {
     USD: { flag: '🇺🇸', name: 'US Dollar' },
@@ -57,6 +60,17 @@ const CurrencySelector = () => {
     }
   };
 
+  const handleSwapCurrencies = () => {
+    setIsSwapping(true);
+    
+    // Delay the actual swap to let the animation play
+    setTimeout(() => {
+      setFromCurrency(toCurrency);
+      setToCurrency(fromCurrency);
+      setIsSwapping(false);
+    }, 300); // Match this with the animation duration
+  };
+
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       handleConvert();
@@ -78,22 +92,41 @@ const CurrencySelector = () => {
           </div>
         )}
 
-        <AmountInput
-          value={fromAmount}
-          currency={fromCurrency}
-          onChange={setFromAmount}
-          onCurrencyChange={setFromCurrency}
-          currencyConfig={currencyConfig}
-          loading={false}
-        />
-        
-        <ConversionResult
-          amount={toAmount}
-          currency={toCurrency}
-          onCurrencyChange={setToCurrency}
-          currencyConfig={currencyConfig}
-          loading={loading}
-        />
+        <LayoutGroup>
+          <AmountInput
+            value={fromAmount}
+            currency={fromCurrency}
+            onChange={setFromAmount}
+            onCurrencyChange={setFromCurrency}
+            currencyConfig={currencyConfig}
+            loading={false}
+            layoutId="source-currency"
+          />
+          
+          <ConversionResult
+            amount={toAmount}
+            currency={toCurrency}
+            onCurrencyChange={setToCurrency}
+            currencyConfig={currencyConfig}
+            loading={loading}
+            layoutId="target-currency"
+          />
+        </LayoutGroup>
+
+        <motion.button
+          onClick={handleSwapCurrencies}
+          className="w-full p-3 bg-violet-600 text-white rounded-lg hover:bg-violet-700 transition-colors flex items-center justify-center gap-2"
+          whileTap={{ scale: 0.95 }}
+          disabled={isSwapping}
+        >
+          <motion.div
+            animate={{ rotate: isSwapping ? 180 : 0 }}
+            transition={{ duration: 0.3 }}
+          >
+            <ArrowLeftRight className="w-4 h-4" />
+          </motion.div>
+          Swap Currencies
+        </motion.button>
       </div>
     </div>
   );
