@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Loader2 } from 'lucide-react';
+import AmountInput from './AmountInput';
+import ConversionResult from './ConversionResult';
 
 const CurrencySelector = () => {
   const [fromAmount, setFromAmount] = useState('2.00');
@@ -56,48 +57,13 @@ const CurrencySelector = () => {
     }
   };
 
-  // Debounce function to prevent too many API calls
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       handleConvert();
-    }, 500); // Wait 500ms after the last change before converting
+    }, 500);
 
     return () => clearTimeout(timeoutId);
   }, [fromAmount, fromCurrency, toCurrency]);
-
-  const CurrencyInput = ({ value, currency, onChange, onCurrencyChange, readOnly = false }) => (
-    <div className="relative flex items-center w-full p-2 mb-3 bg-white border border-gray-200 rounded-lg">
-      <div className="flex items-center gap-2">
-        <span className="text-xl w-8 h-8 flex items-center justify-center bg-gray-50 rounded-full">
-          {currencyConfig[currency].flag}
-        </span>
-        <select
-          value={currency}
-          onChange={(e) => onCurrencyChange(e.target.value)}
-          className="appearance-none bg-transparent focus:outline-none pr-6 font-medium"
-        >
-          {Object.entries(currencyConfig).map(([code, { flag, name }]) => (
-            <option key={code} value={code}>
-              {code} - {name}
-            </option>
-          ))}
-        </select>
-      </div>
-      <div className="relative flex items-center w-full">
-        <input
-          type="number"
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
-          className="w-full text-right focus:outline-none"
-          min="0"
-          step="0.01"
-          readOnly={readOnly}
-          placeholder="0.00"
-        />
-        {loading && <Loader2 className="w-4 h-4 animate-spin absolute right-2" />}
-      </div>
-    </div>
-  );
 
   return (
     <div className="min-h-screen max-w-md mx-auto mt-20 p-5">
@@ -112,19 +78,21 @@ const CurrencySelector = () => {
           </div>
         )}
 
-        <CurrencyInput
+        <AmountInput
           value={fromAmount}
           currency={fromCurrency}
           onChange={setFromAmount}
           onCurrencyChange={setFromCurrency}
+          currencyConfig={currencyConfig}
+          loading={false}
         />
         
-        <CurrencyInput
-          value={toAmount}
+        <ConversionResult
+          amount={toAmount}
           currency={toCurrency}
-          onChange={setToAmount}
           onCurrencyChange={setToCurrency}
-          readOnly={true}
+          currencyConfig={currencyConfig}
+          loading={loading}
         />
       </div>
     </div>
